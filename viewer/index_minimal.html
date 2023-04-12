@@ -1,4 +1,5 @@
 <!--
+ * Developed from a demo orginally
  * Copyright 2018-2020 DITA (AM Consulting LLC)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +13,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * Developed on behalf of: CAST (http://www.cast.org)
- * Licensed to: Bokbasen AS and CAST under one or more contributor license agreements.
 -->
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="height: 100%;">
 
 <head>
     <title>D2 Reader</title>
@@ -28,30 +26,38 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 
-    <!-- R2 Reader CSS -->
+    <!-- Im not using this the way R2D2BC intends; just a kludge to get my css copied somewhere it gets served. -->
+    <link rel="stylesheet" href="injectables/style/bloom-readium.css" />
     <link rel="stylesheet" href="reader.css" />
     <script src="reader.js"></script>
-
 </head>
 
-<body>
-    <div style="position:fixed;top:0;left:0;z-index: 1000;bottom: 0; overflow: scroll;">
-
-        <button onclick="javascript:d2reader.previousResource()">previous resource</button><br>
-        <button onclick="javascript:d2reader.nextResource()">next resource</button><br>
-        <button onclick="javascript:d2reader.previousPage()">previous page</button><br>
-        <button onclick="javascript:d2reader.nextPage()">next page</button><br>
-        <button onclick="javascript:d2reader.scroll(true)">scroll</button><br>
-        <button onclick="javascript:d2reader.scroll(false)">paginated</button><br>
-
-    </div>
-
-    <div class="content" id="root">
-        <div id="D2Reader-Container" style="border: solid 5px rebeccapurple">
-            <main style="height: calc(100vh - 10px)" tabindex=-1 id="iframe-wrapper">
+<body style = "height: 100%; margin:0;">
+    <div class="content" id="root" style="height:100%; box-sizing: border-box;">
+         <div id="D2Reader-Container" style="position: relative; height:100%">
+            <div id="headerMenu">
+                <button id="menu-button-play" class="" onclick="javascript:d2reader.startReadAlong()">
+                    <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                </button>
+                <button id="menu-button-pause" class="" onclick="javascript:d2reader.pauseReadAlong()" style="display:none">
+                    <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                </button>
+            </div>
+            <main tabindex=-1 id="iframe-wrapper">
                 <div id="reader-loading" class="loading"></div>
                 <div id="reader-error" class="error"></div>
+                <div id="spreads">
+                    <div id="spread"style="display:flex;align-items: center;justify-content: center;height: 100%">
+                        <iframe id="page-content" style="flex-shrink:0"></iframe>
+                    </div>
+                </div>
             </main>
+            <button id="left-page-btn" class="page-switch-overlay-icon"onclick="javascript:d2reader.previousPage()">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            </button>
+            <button id="right-page-btn" class="page-switch-overlay-icon" onclick="javascript:d2reader.nextPage()">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            </button>
         </div>
     </div>
 
@@ -71,44 +77,19 @@
             }
             return params;
         };
-
-
-        let injectables = [
-            { type: 'style', url: '/viewer/readium-css/ReadiumCSS-before.css', r2before: true },
-            { type: 'style', url: '/viewer/readium-css/ReadiumCSS-default.css', r2default: true },
-            { type: 'style', url: '/viewer/readium-css/ReadiumCSS-after.css', r2after: true },
-        ]
-
         let urlParams = getURLQueryParams();
         let d2reader = undefined;
         D2Reader.load({
             url: new URL(urlParams['url']),
-            injectables: injectables,
-            injectablesFixed: [],
+            rights: {
+                enableMediaOverlays: true,
+            },
+            mediaOverlays: {autoTurn: false},
+            userSettings: { columnCount: "1" },
         }).then(instance => {
             d2reader = instance
         });
 
     </script>
-
-    <noscript>
-        <style>
-            noscript {
-                width: 100%;
-                height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .warning {
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-                font-size: 1.5rem;
-                font-weight: bold;
-            }
-        </style>
-        <p class="warning">To use this viewer, please enable JavaScript.</p>
-    </noscript>
 </body>
-
 </html>

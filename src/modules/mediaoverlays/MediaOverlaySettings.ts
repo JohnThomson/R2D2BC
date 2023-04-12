@@ -111,7 +111,8 @@ export class MediaOverlaySettings implements IMediaOverlayUserSettings {
         settings.autoScroll = initialSettings.autoScroll;
         log.log(settings.autoScroll);
       }
-      if (initialSettings?.autoTurn) {
+      //if (initialSettings?.autoTurn) {
+      if ("autoTurn" in initialSettings) {
         settings.autoTurn = initialSettings.autoTurn;
         log.log(settings.autoScroll);
       }

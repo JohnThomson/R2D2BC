@@ -539,7 +539,7 @@ export class IFrameNavigator extends EventEmitter implements Navigator {
         mainElement,
         "main#iframe-wrapper"
       );
-      wrapper.style.overflow = "auto";
+      wrapper.style.overflow = "hidden"; // We try for an exact fit, but if it's over by a fraction of a pixel, we don't want scroll bars appearing
       let iframe = HTMLUtilities.findElement(
         mainElement,
         "main#iframe-wrapper iframe"
@@ -2124,23 +2124,7 @@ export class IFrameNavigator extends EventEmitter implements Navigator {
             ? this.iframes[1].parentElement?.parentElement
             : (this.iframes[0].parentElement?.parentElement as HTMLElement);
         if (iframeParent && width) {
-          var widthRatio =
-            (parseInt(getComputedStyle(iframeParent).width) - 100) /
-            (this.iframes.length === 2
-              ? parseInt(width?.replace("px", "")) * 2 + 200
-              : parseInt(width?.replace("px", "")));
-          var heightRatio =
-            (parseInt(getComputedStyle(iframeParent).height) - 100) /
-            parseInt(height?.replace("px", ""));
-          var scale = Math.min(widthRatio, heightRatio);
-          iframeParent.style.transform = "scale(" + scale + ")";
-          for (const iframe of this.iframes) {
-            iframe.style.height = height;
-            iframe.style.width = width;
-            if (iframe.parentElement) {
-              iframe.parentElement.style.height = height;
-            }
-          }
+          this.adjustScaling(width, height, iframeParent);
         }
       }, 400);
     }
@@ -2544,14 +2528,14 @@ export class IFrameNavigator extends EventEmitter implements Navigator {
     if (this.publication.isFixedLayout) {
       var index = this.publication.getSpineIndex(this.currentChapterLink.href);
       const minHeight =
-        BrowserUtilities.getHeight() - 40 - (this.attributes?.margin ?? 0);
+        BrowserUtilities.getHeight() - (this.attributes?.margin ?? 0);
 
       var iframeParent =
         index === 0 && this.iframes.length === 2
           ? this.iframes[1].parentElement?.parentElement
           : (this.iframes[0].parentElement?.parentElement as HTMLElement);
       if (iframeParent) {
-        iframeParent.style.height = minHeight + 40 + "px";
+        iframeParent.style.height = minHeight + "px";
 
         let height, width;
         let doc;
@@ -2589,24 +2573,7 @@ export class IFrameNavigator extends EventEmitter implements Navigator {
           }
         }
 
-        var widthRatio =
-          (parseInt(getComputedStyle(iframeParent).width) - 100) /
-          (this.iframes.length === 2
-            ? parseInt(width?.replace("px", "")) * 2 + 200
-            : parseInt(width?.replace("px", "")));
-        var heightRatio =
-          (parseInt(getComputedStyle(iframeParent).height) - 100) /
-          parseInt(height?.replace("px", ""));
-        var scale = Math.min(widthRatio, heightRatio);
-        iframeParent.style.transform = "scale(" + scale + ")";
-
-        for (const iframe of this.iframes) {
-          iframe.style.height = height;
-          iframe.style.width = width;
-          if (iframe.parentElement) {
-            iframe.parentElement.style.height = height;
-          }
-        }
+        this.adjustScaling(width, height, iframeParent);
       }
     }
 
@@ -2676,6 +2643,27 @@ export class IFrameNavigator extends EventEmitter implements Navigator {
         this.historyModule.handleResize();
       }
     }, 150);
+  }
+
+  private adjustScaling(width: any, height: any, iframeParent: HTMLElement) {
+    const widthNum = parseFloat(width?.replace("px", ""));
+    const heightNum = parseFloat(height?.replace("px", ""));
+    var widthRatio = (parseFloat(getComputedStyle(iframeParent).width)) /
+      (this.iframes.length === 2
+        ? widthNum * 2 + 200 // probably needs adjustment if we do two-page spreads
+        : widthNum);
+    var heightRatio = (parseFloat(getComputedStyle(iframeParent).height)) /
+      heightNum;
+    var scale = Math.min(widthRatio, heightRatio);
+    iframeParent.style.transform = "scale(" + scale + ")";
+
+    for (const iframe of this.iframes) {
+      iframe.style.height = (heightNum + 1) + "px";
+      iframe.style.width = (widthNum + 1) + "px";
+      // if (iframe.parentElement) {
+      //   iframe.parentElement.style.height = height;
+      // }
+    }
   }
 
   updatePositionInfo(save: boolean = true) {
@@ -2770,6 +2758,7 @@ export class IFrameNavigator extends EventEmitter implements Navigator {
       };
 
       this.stopReadAloud();
+      this.stopReadAlong();
       this.navigate(position, false);
     } else {
       if (this.nextChapterLink) {
@@ -2782,6 +2771,7 @@ export class IFrameNavigator extends EventEmitter implements Navigator {
           title: this.nextChapterLink.title,
         };
         this.stopReadAloud();
+        this.stopReadAlong();
         this.navigate(position, false);
       }
     }

@@ -53,9 +53,9 @@ const App = () => {
         )}
         <div
           id="D2Reader-Container"
-          style={{
-            border: "solid 5px rebeccapurple",
-          }}
+          // style={{
+          //   border: "solid 5px rebeccapurple",
+          // }}
         >
           <main
             tabIndex={-1}

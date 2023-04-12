@@ -130,6 +130,13 @@ export class MediaOverlayModule implements ReaderModule {
   async initializeResource(links: Array<Link | undefined>) {
     this.currentLinks = links;
     this.currentLinkIndex = 0;
+    // This method is called on change of chapter; we don't want to remember a media item from the
+    // previous chapter.
+    this.mediaOverlayTextAudioPair = undefined;
+    // don't want automatic highlighting until we start playing, even though
+    // (to speed things up later? or in case we are in autoTurn mode?) we are going
+    // to start setting things up for play at once.
+    this.ensureOnTimeUpdate(true, false);
     await this.playLink();
   }
 
@@ -233,7 +240,7 @@ export class MediaOverlayModule implements ReaderModule {
     if (this.navigator.rights.enableMediaOverlays) {
       this.settings.playing = false;
 
-      if (this.audioElement) this.audioElement.pause();
+      this.mediaOverlaysStop();
 
       if (this.play) this.play.style.removeProperty("display");
       if (this.pause) this.pause.style.display = "none";
@@ -242,7 +249,7 @@ export class MediaOverlayModule implements ReaderModule {
   pauseReadAloud() {
     if (this.navigator.rights.enableMediaOverlays) {
       this.settings.playing = false;
-      this.audioElement.pause();
+      this.mediaOverlaysPause();
       if (this.play) this.play.style.removeProperty("display");
       if (this.pause) this.pause.style.display = "none";
     }
@@ -385,6 +392,8 @@ export class MediaOverlayModule implements ReaderModule {
             this.navigator.nextResource();
           } else {
             this.stopReadAloud();
+            this.ensureOnTimeUpdate(true, false); // so playLink won't highlight something
+            this.playLink(); // resets things so next press of Play will start from beginning.    
           }
         }
       } else {
@@ -705,6 +714,8 @@ export class MediaOverlayModule implements ReaderModule {
             this.navigator.nextResource();
           } else {
             this.stopReadAloud();
+            this.ensureOnTimeUpdate(true, false);
+            this.playLink(); // resets things so next press of Play will start from beginning.
           }
         }
       };

@@ -1,0 +1,113 @@
+
+@font-face {
+    font-family: "Glyphicons Halflings";
+    src: url(http://localhost:4444/viewer/fonts/glyphicons-halflings-regular.woff) format("woff");
+}
+
+.page-switch-overlay-icon {
+    overflow: hidden;
+    display: block;
+    position: absolute;
+    top: 20%;
+    bottom: 20%;
+    opacity: 0.3;
+    z-index: 99 !important;
+    border: none !important;
+    padding: 0;
+    margin: 0;
+    padding-top: 0.2em;
+    padding-bottom: 0.44em;
+    font-size: 40px;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: #000;
+}
+.page-switch-overlay-icon > span {
+    padding: 0;
+    margin: 0;
+    vertical-align: middle;
+}
+#left-page-btn {
+    left: 0;
+    border-top-right-radius: 0.3em;
+    border-bottom-right-radius: 0.3em;
+}
+
+#right-page-btn {
+    right: 0;
+    border-top-left-radius: 0.3em;
+    border-bottom-left-radius: 0.3em;
+}
+#left-page-btn:hover,#right-page-btn:hover {
+    opacity: 1;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.glyphicon-chevron-left,
+.glyphicon-chevron-right,
+.icon-next,
+.icon-prev {
+    position: absolute;
+    top: 50%;
+    z-index: 5;
+    display: inline-block;
+    margin-top: -10px;
+}
+.glyphicon-chevron-left,
+.icon-prev {
+    margin-left: -10px;
+}
+.glyphicon-chevron-right,
+.icon-next {
+        margin-right: -10px;
+}
+.icon-next,
+.icon-prev {
+    width: 20px;
+    height: 20px;
+    font-family: serif;
+    line-height: 1;
+}
+.glyphicon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: "Glyphicons Halflings";
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.glyphicon-chevron-left:before {
+    content: "\e079";
+}
+.glyphicon-chevron-right:before {
+    content: "\e080";
+}
+.glyphicon-play:before {
+    content: "\e072";
+}
+.glyphicon-pause:before {
+    content: "\e073";
+}
+
+#headerMenu {
+    height: 26px;
+    background-color: black;
+    color: white;
+    padding: 0 10px;
+}
+
+#headerMenu button {
+    background-color: black;
+    color: white;
+    border: none !important;
+}
+
+#iframe-wrapper {
+    height: calc(100% - 26px);
+    width: 100%;
+    background-color: black;
+    overflow:hidden;
+}
